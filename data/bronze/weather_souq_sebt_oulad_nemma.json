@@ -1,0 +1,93 @@
+{
+  "latitude": 32.3125,
+  "longitude": -6.6875,
+  "generationtime_ms": 0.7576942443847656,
+  "utc_offset_seconds": 3600,
+  "timezone": "Africa/Casablanca",
+  "timezone_abbreviation": "GMT+1",
+  "elevation": 409.0,
+  "daily_units": {
+    "time": "iso8601",
+    "temperature_2m_max": "°C",
+    "temperature_2m_min": "°C",
+    "precipitation_sum": "mm",
+    "precipitation_probability_max": "%",
+    "wind_speed_10m_max": "km/h",
+    "wind_gusts_10m_max": "km/h",
+    "weather_code": "wmo code"
+  },
+  "daily": {
+    "time": [
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18",
+      "2026-09-19",
+      "2026-09-20"
+    ],
+    "temperature_2m_max": [
+      41.2,
+      39.3,
+      35.6,
+      32.3,
+      34.2,
+      37.9,
+      39.6
+    ],
+    "temperature_2m_min": [
+      23.3,
+      24.5,
+      19.8,
+      17.5,
+      17.9,
+      19.4,
+      21.5
+    ],
+    "precipitation_sum": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "precipitation_probability_max": [
+      3,
+      0,
+      0,
+      3,
+      10,
+      9,
+      3
+    ],
+    "wind_speed_10m_max": [
+      14.3,
+      20.3,
+      17.3,
+      14.8,
+      7.1,
+      16.6,
+      13.9
+    ],
+    "wind_gusts_10m_max": [
+      30.2,
+      35.6,
+      34.6,
+      28.1,
+      15.1,
+      45.4,
+      26.3
+    ],
+    "weather_code": [
+      3,
+      3,
+      1,
+      2,
+      2,
+      3,
+      2
+    ]
+  }
+}
