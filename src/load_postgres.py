@@ -1,14 +1,19 @@
+import os
+from pathlib import Path
 import pandas as pd
 from sqlalchemy import create_engine, text
-from sqlalchemy.dialects.postgresql import insert
 
-DB_USER = "imad"
-DB_PASS = "imadpostgres"
-DB_HOST = "localhost"
-DB_PORT = "5432"
-DB_NAME = "weather_db"
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+DB_USER = os.getenv("POSTGRES_USER", "imad")
+DB_PASS = os.getenv("POSTGRES_PASSWORD", "imadpostgres")
+DB_HOST = os.getenv("POSTGRES_HOST", "postgres")
+DB_PORT = os.getenv("POSTGRES_PORT", "5432")
+DB_NAME = os.getenv("POSTGRES_DB", "weather_db")
+
+DATABASE_URL = (
+    f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+)
 engine = create_engine(DATABASE_URL)
 
 CREATE_TABLES_SQL = """
@@ -44,9 +49,10 @@ CREATE TABLE IF NOT EXISTS weather_forecasts (
 with engine.begin() as connection:
     connection.execute(text(CREATE_TABLES_SQL))
 
-df = pd.read_parquet('data/gold/weather_gold.parquet')
+gold_path = BASE_DIR / "data" / "gold" / "weather_gold.parquet"
+df = pd.read_parquet(gold_path)
 
-unique_cities = df[['city', 'admin_name', 'latitude', 'longitude']].drop_duplicates()
+unique_cities = df[["city", "admin_name", "latitude", "longitude"]].drop_duplicates()
 
 with engine.begin() as connection:
     for _, row in unique_cities.iterrows():
@@ -58,32 +64,47 @@ with engine.begin() as connection:
                 latitude = EXCLUDED.latitude,
                 longitude = EXCLUDED.longitude;
         """)
-        connection.execute(city_upsert_query, {
-            "city": row['city'],
-            "admin_name": row['admin_name'],
-            "latitude": row['latitude'],
-            "longitude": row['longitude']
-        })
+        connection.execute(
+            city_upsert_query,
+            {
+                "city": row["city"],
+                "admin_name": row["admin_name"],
+                "latitude": row["latitude"],
+                "longitude": row["longitude"],
+            },
+        )
 
 cities_db = pd.read_sql("SELECT id AS city_id, city_name FROM cities;", con=engine)
-df = pd.merge(df, cities_db, left_on='city', right_on='city_name', how='inner')
+df = pd.merge(df, cities_db, left_on="city", right_on="city_name", how="inner")
 
-forecast_df = df.rename(columns={
-    'temperature_2m_max': 'temp_max',
-    'temperature_2m_min': 'temp_min',
-    'precipitation_sum': 'precipitation',
-    'precipitation_probability_max': 'precipitation_prob',
-    'wind_speed_10m_max': 'wind_speed',
-    'wind_gusts_10m_max': 'wind_gusts'
-})
+forecast_df = df.rename(
+    columns={
+        "temperature_2m_max": "temp_max",
+        "temperature_2m_min": "temp_min",
+        "precipitation_sum": "precipitation",
+        "precipitation_probability_max": "precipitation_prob",
+        "wind_speed_10m_max": "wind_speed",
+        "wind_gusts_10m_max": "wind_gusts",
+    }
+)
 
 cols_to_insert = [
-    'city_id', 'forecast_date', 'temp_max', 'temp_min',
-    'precipitation', 'precipitation_prob', 'wind_speed', 'wind_gusts',
-    'weather_code', 'temp_category', 'rain_category', 'wind_category',
-    'risk_score', 'risk_level'
+    "city_id",
+    "forecast_date",
+    "temp_max",
+    "temp_min",
+    "precipitation",
+    "precipitation_prob",
+    "wind_speed",
+    "wind_gusts",
+    "weather_code",
+    "temp_category",
+    "rain_category",
+    "wind_category",
+    "risk_score",
+    "risk_level",
 ]
-records = forecast_df[cols_to_insert].to_dict(orient='records')
+records = forecast_df[cols_to_insert].to_dict(orient="records")
 
 upsert_forecast_sql = text("""
     INSERT INTO weather_forecasts (

@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    environment:
+      POSTGRES_DB: weather_db
+      POSTGRES_USER: imad
+      POSTGRES_PASSWORD: imadpostgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U imad -d weather_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  airflow:
+    image: apache/airflow:2.9.3-python3.11
+    container_name: airflow
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://imad:imadpostgres@postgres:5432/weather_db
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./src:/opt/airflow/src
+      - ./data:/opt/airflow/data
+    command: standalone
+
+  app:
+    build: .
+    container_name: streamlit-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8501:8501"
+    environment:
+      - DB_USER=imad
+      - DB_PASS=imadpostgres
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=weather_db
+
+volumes:
+  postgres_data:
