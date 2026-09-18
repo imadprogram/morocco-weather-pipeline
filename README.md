@@ -56,7 +56,7 @@ Les données de la couche Gold sont insérées dans PostgreSQL (`load/load_postg
 ## Modélisation UML
 
 * **Diagramme des Cas d'Utilisation** :  
-  `[Click here](https://lucid.app/lucidchart/82245c29-c961-4a67-89f7-8710237e23d1/edit?viewport_loc=320%2C100%2C2229%2C1044%2C.Q4MUjXso07N&invitationId=inv_7331a68a-b57f-4c81-a8b8-a561c52b7f40)`
+  [Click here](https://lucid.app/lucidchart/82245c29-c961-4a67-89f7-8710237e23d1/edit?viewport_loc=320%2C100%2C2229%2C1044%2C.Q4MUjXso07N&invitationId=inv_7331a68a-b57f-4c81-a8b8-a561c52b7f40)
 
 ---
 
