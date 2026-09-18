@@ -20,22 +20,22 @@ with DAG(
 
     task_extract = BashOperator(
         task_id="extract_weather",
-        bash_command="python /opt/airflow/src/extract.py"
+        bash_command="python /opt/airflow/extraction/extract.py"
     )
 
     task_silver = BashOperator(
         task_id="transform_silver",
-        bash_command="python /opt/airflow/src/transform_silver.py"
+        bash_command="python /opt/airflow/transformation/transform_silver.py"
     )
 
     task_gold = BashOperator(
         task_id="transform_gold",
-        bash_command="python /opt/airflow/src/transform_gold.py"
+        bash_command="python /opt/airflow/transformation/transform_gold.py"
     )
 
     task_load = BashOperator(
         task_id="load_postgres",
-        bash_command="python /opt/airflow/src/load_postgres.py"
+        bash_command="python /opt/airflow/load/load_postgres.py"
     )
 
 
